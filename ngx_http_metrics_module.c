@@ -10,8 +10,6 @@ typedef struct {
   ngx_uint_t enable;
 } ngx_http_metrics_main_conf_t;
 
-
-
 static ngx_int_t
 ngx_http_metrics_init(ngx_conf_t *cf);
 static ngx_int_t
@@ -100,7 +98,15 @@ static void *
 ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 {
   fprintf(stderr, "METRICS: call ngx_http_metrics_create_main_conf");
-  return 0;
+
+  ngx_http_metrics_main_conf_t *mmcf;
+  mmcf = ngx_pcalloc(cf->pool, sizeof(ngx_http_metrics_main_conf_t));
+
+  if (mmcf == NULL) {
+    return NULL;
+  }
+
+  return mmcf;
 }
 
 static char *
