@@ -21,7 +21,7 @@ ngx_http_metrics_create_main_conf(ngx_conf_t *cf);
 static char *
 ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
-ngx_int_t ngx_http_metrics_handler(ngx_http_request_t *r);
+ngx_int_t ngx_http_metrics_end_handler(ngx_http_request_t *r);
 
 static ngx_command_t
 ngx_http_metrics_commands[] = {
@@ -82,7 +82,7 @@ ngx_http_metrics_init(ngx_conf_t *cf)
     return NGX_ERROR;
   }
 
-  *h = ngx_http_metrics_handler;
+  *h = ngx_http_metrics_end_handler;
   
   return NGX_OK;
 }
@@ -117,8 +117,22 @@ ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 }
 
 ngx_int_t
-ngx_http_metrics_handler(ngx_http_request_t *r)
+ngx_http_metrics_end_handler(ngx_http_request_t *r)
 {
   fprintf(stderr, "METRICS: call ngx_http_metrics_handler\n");
-  return 0;
+
+  ngx_http_metrics_main_conf_t *mmcf;
+
+  mmcf = ngx_http_get_module_main_conf(r, ngx_http_metrics_module);
+
+  if (!mmcf->enable) {
+    fprintf(stderr, "METRICS: metrics is disabled\n");
+    return NGX_OK;
+  }
+
+  time_t ts = ngx_time();
+
+  fprintf(stderr, "Time in handler = %ld", ts);
+  
+  return NGX_OK;
 }
