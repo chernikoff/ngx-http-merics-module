@@ -73,7 +73,7 @@ ngx_http_metrics_init(ngx_conf_t *cf)
   ngx_http_handler_pt       *h;
   ngx_http_core_main_conf_t *cmcf;
 
-  fprintf(stderr, "METRICS: call ngx_http_metrics_init");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_init\n");
 
   cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 
@@ -90,14 +90,14 @@ ngx_http_metrics_init(ngx_conf_t *cf)
 static ngx_int_t
 ngx_http_metrics_process_init(ngx_cycle_t *cycle)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_process_init");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_process_init\n");
   return 0;
 }
 
 static void *
 ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_create_main_conf");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_create_main_conf\n");
 
   ngx_http_metrics_main_conf_t *mmcf;
   mmcf = ngx_pcalloc(cf->pool, sizeof(ngx_http_metrics_main_conf_t));
@@ -112,13 +112,13 @@ ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 static char *
 ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_config");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_config\n");
   return 0;
 }
 
 ngx_int_t
 ngx_http_metrics_handler(ngx_http_request_t *r)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_handler");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_handler\n");
   return 0;
 }
