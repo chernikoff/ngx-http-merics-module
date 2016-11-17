@@ -90,7 +90,7 @@ ngx_http_metrics_init(ngx_conf_t *cf)
   h = ngx_array_push(&cmcf->phases[NGX_HTTP_LOG_PHASE].handlers);
 
   if (h == NULL) {
-    fprintf(stderr, "METRICS: Can't create end handler\n");
+    fprintf(stderr, "METRICS: Can't create metrics handler\n");
     return NGX_ERROR;
   }
 
@@ -210,7 +210,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
 ngx_int_t
 ngx_http_metrics_handler(ngx_http_request_t *r)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_end_handler\n");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_handler\n");
 
   ngx_http_metrics_main_conf_t *mmcf;
 
