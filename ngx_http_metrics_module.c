@@ -19,7 +19,7 @@ static void *
 ngx_http_metrics_create_main_conf(ngx_conf_t *cf);
 
 static char *
-ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+ngx_http_metrics_enable(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 ngx_int_t
 ngx_http_metrics_begin_handler(ngx_http_request_t *r);
@@ -29,9 +29,9 @@ ngx_http_metrics_handler(ngx_http_request_t *r);
 static ngx_command_t
 ngx_http_metrics_commands[] = {
 
-  { ngx_string("metrics_config"),
+  { ngx_string("metrics_enable"),
     NGX_HTTP_MAIN_CONF | NGX_CONF_ANY,
-    ngx_http_metrics_config,
+    ngx_http_metrics_enable,
     NGX_HTTP_MAIN_CONF_OFFSET,
     0,
     NULL },
@@ -115,7 +115,7 @@ ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 }
 
 static char *
-ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_http_metrics_enable(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
   fprintf(stderr, "METRICS: call ngx_http_metrics_config\n");
   return 0;
