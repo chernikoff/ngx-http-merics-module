@@ -21,7 +21,10 @@ ngx_http_metrics_create_main_conf(ngx_conf_t *cf);
 static char *
 ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
-ngx_int_t ngx_http_metrics_end_handler(ngx_http_request_t *r);
+ngx_int_t
+ngx_http_metrics_begin_handler(ngx_http_request_t *r);
+ngx_int_t
+ngx_http_metrics_handler(ngx_http_request_t *r);
 
 static ngx_command_t
 ngx_http_metrics_commands[] = {
@@ -78,11 +81,13 @@ ngx_http_metrics_init(ngx_conf_t *cf)
   cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 
   h = ngx_array_push(&cmcf->phases[NGX_HTTP_LOG_PHASE].handlers);
+
   if (h == NULL) {
+    fprintf(stderr, "METRICS: Can't create end handler\n");
     return NGX_ERROR;
   }
 
-  *h = ngx_http_metrics_end_handler;
+  *h = ngx_http_metrics_handler;
   
   return NGX_OK;
 }
@@ -117,9 +122,9 @@ ngx_http_metrics_config(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 }
 
 ngx_int_t
-ngx_http_metrics_end_handler(ngx_http_request_t *r)
+ngx_http_metrics_handler(ngx_http_request_t *r)
 {
-  fprintf(stderr, "METRICS: call ngx_http_metrics_handler\n");
+  fprintf(stderr, "METRICS: call ngx_http_metrics_end_handler\n");
 
   ngx_http_metrics_main_conf_t *mmcf;
 
@@ -132,7 +137,7 @@ ngx_http_metrics_end_handler(ngx_http_request_t *r)
 
   time_t ts = ngx_time();
 
-  fprintf(stderr, "Time in handler = %ld", ts);
+  fprintf(stderr, "METRICS: Time end = %ld\n", ts);
   
   return NGX_OK;
 }
