@@ -218,6 +218,7 @@ ngx_http_metrics_handler(ngx_http_request_t *r)
     return NGX_OK;
   }
 
+  //TODO: collect real metrics
   time_t ts = ngx_time();
 
   fprintf(stderr, "METRICS: Time end = %ld\n", ts);
