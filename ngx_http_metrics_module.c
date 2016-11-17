@@ -24,7 +24,7 @@ static char *
 ngx_http_metrics_status(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 ngx_int_t
-ngx_http_metrics_begin_handler(ngx_http_request_t *r);
+ngx_http_metrics_status_handler(ngx_http_request_t *r);
 ngx_int_t
 ngx_http_metrics_handler(ngx_http_request_t *r);
 
@@ -133,8 +133,75 @@ ngx_http_metrics_enable(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 static char *
 ngx_http_metrics_status(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
+  ngx_http_core_loc_conf_t *clcf;
+
   fprintf(stderr, "METRICS: call ngx_http_metrics_status\n");
-  return 0;
+
+  clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+  clcf->handler = ngx_http_metrics_status_handler;
+  
+  return NGX_CONF_OK;
+}
+
+ngx_int_t
+ngx_http_metrics_status_handler(ngx_http_request_t *r)
+{
+  ngx_int_t   rc;
+  size_t      size;
+  ngx_buf_t   *buf;
+  ngx_chain_t out;
+  
+  if(!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
+    return NGX_HTTP_NOT_ALLOWED;
+  }
+
+  rc = ngx_http_discard_request_body(r);
+
+  if(rc != NGX_OK) {
+    return rc;
+  }
+
+  r->headers_out.content_type_len = sizeof("text/plain") - 1;
+  ngx_str_set(&r->headers_out.content_type, "text/plain");
+  r->headers_out.content_type_lowcase = NULL;
+
+  if(r->method == NGX_HTTP_HEAD) {
+    r->headers_out.status = NGX_HTTP_OK;
+
+    rc = ngx_http_send_header(r);
+
+    if(rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+      return rc;
+    }
+  }
+
+  size = sizeof("Hello world!") - 1;
+
+  buf = ngx_create_temp_buf(r->pool, size);
+
+  if(buf == NULL) {
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  out.buf  = buf;
+  out.next = NULL;
+
+  //TODO: Real metrics
+  buf->last = ngx_cpymem(buf->last, "Hello World!", sizeof("Hello World!") - 1);
+
+  r->headers_out.status = NGX_OK;
+  r->headers_out.content_length_n = buf->last - buf->pos;
+
+  buf->last_buf = (r == r->main) ? 1 : 0;
+  buf->last_in_chain = 1;
+
+  rc = ngx_http_send_header(r);
+
+  if(rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+    return rc;
+  }
+
+  return ngx_http_output_filter(r, &out);
 }
 
 ngx_int_t
