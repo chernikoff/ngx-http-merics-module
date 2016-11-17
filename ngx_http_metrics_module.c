@@ -192,7 +192,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
     buf->last = ngx_cpymem(buf->last, "Metrics disabled", sizeof("Metrics disabled") - 1);
   }
 
-  r->headers_out.status = NGX_OK;
+  r->headers_out.status = NGX_HTTP_OK;
   r->headers_out.content_length_n = buf->last - buf->pos;
 
   buf->last_buf = (r == r->main) ? 1 : 0;
