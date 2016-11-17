@@ -10,6 +10,8 @@ typedef struct {
   ngx_uint_t enable;
 } ngx_http_metrics_main_conf_t;
 
+ngx_uint_t metrics_enable = 0;
+
 static ngx_int_t
 ngx_http_metrics_init(ngx_conf_t *cf);
 static ngx_int_t
@@ -32,7 +34,7 @@ static ngx_command_t
 ngx_http_metrics_commands[] = {
 
   { ngx_string("metrics_enable"),
-    NGX_HTTP_MAIN_CONF | NGX_CONF_ANY | NGX_CONF_NOARGS,
+    NGX_HTTP_SRV_CONF | NGX_CONF_NOARGS,
     ngx_http_metrics_enable,
     NGX_HTTP_MAIN_CONF_OFFSET,
     0,
@@ -126,8 +128,15 @@ ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 static char *
 ngx_http_metrics_enable(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
+  ngx_http_metrics_main_conf_t *mmcf;
   fprintf(stderr, "METRICS: call ngx_http_metrics_config\n");
-  return 0;
+
+  mmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_metrics_module);
+
+  mmcf->enable = 1;
+  metrics_enable = 1;
+  
+  return NGX_OK;
 }
 
 static char *
@@ -150,7 +159,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
   size_t      size;
   ngx_buf_t   *buf;
   ngx_chain_t out;
-  
+    
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
     return NGX_HTTP_NOT_ALLOWED;
   }
@@ -175,7 +184,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
     }
   }
 
-  size = sizeof("Hello world!") - 1;
+  size = sizeof("Metrics disabled") - 1;
 
   buf = ngx_create_temp_buf(r->pool, size);
 
@@ -187,7 +196,11 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
   out.next = NULL;
 
   //TODO: Real metrics
-  buf->last = ngx_cpymem(buf->last, "Hello World!", sizeof("Hello World!") - 1);
+   if (metrics_enable) {
+    buf->last = ngx_cpymem(buf->last, "Metrics enabled", sizeof("Metrics enabled") - 1);
+  } else {
+    buf->last = ngx_cpymem(buf->last, "Metrics disabled", sizeof("Metrics disabled") - 1);
+  }
 
   r->headers_out.status = NGX_OK;
   r->headers_out.content_length_n = buf->last - buf->pos;
