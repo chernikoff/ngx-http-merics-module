@@ -6,10 +6,11 @@ $ngx_path$/auto/configure --add-module=$absolute_path$/ngx-http-merics-module
 
 #Usage:
 In nginx.conf:
-server {
-    metrics_enable;
+
+    server {
+        metrics_enable;
     
-    location /metrics {
-        metrics_status;
+        location /metrics {
+            metrics_status;
+        }
     }
-}
