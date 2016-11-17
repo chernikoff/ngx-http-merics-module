@@ -210,6 +210,8 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
 ngx_int_t
 ngx_http_metrics_handler(ngx_http_request_t *r)
 {
+  ngx_time_t      *tp;
+  ngx_msec_int_t  ms;
   fprintf(stderr, "METRICS: call ngx_http_metrics_handler\n");
 
   ngx_http_metrics_main_conf_t *mmcf;
@@ -222,9 +224,15 @@ ngx_http_metrics_handler(ngx_http_request_t *r)
   }
 
   //TODO: collect real metrics
-  time_t ts = ngx_time();
+  tp = ngx_timeofday();
 
-  fprintf(stderr, "METRICS: Time end = %ld\n", ts);
+  ms = (ngx_msec_int_t)(
+         (tp->sec - r->start_sec) * 1000 + (tp->msec - r->start_msec)
+       );
+
+  ms = ngx_max(ms, 0);
+
+  fprintf(stderr, "METRICS: request time = %ld:%ld\n", (time_t)(ms / 1000), ms % 1000);
   
   return NGX_OK;
 }
