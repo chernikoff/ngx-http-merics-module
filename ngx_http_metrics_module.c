@@ -151,13 +151,13 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
   ngx_buf_t   *buf;
   ngx_chain_t out;
   
-  if(!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
+  if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
     return NGX_HTTP_NOT_ALLOWED;
   }
 
   rc = ngx_http_discard_request_body(r);
 
-  if(rc != NGX_OK) {
+  if (rc != NGX_OK) {
     return rc;
   }
 
@@ -165,12 +165,12 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
   ngx_str_set(&r->headers_out.content_type, "text/plain");
   r->headers_out.content_type_lowcase = NULL;
 
-  if(r->method == NGX_HTTP_HEAD) {
+  if (r->method == NGX_HTTP_HEAD) {
     r->headers_out.status = NGX_HTTP_OK;
 
     rc = ngx_http_send_header(r);
 
-    if(rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+    if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
       return rc;
     }
   }
@@ -179,7 +179,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
 
   buf = ngx_create_temp_buf(r->pool, size);
 
-  if(buf == NULL) {
+  if (buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
@@ -197,7 +197,7 @@ ngx_http_metrics_status_handler(ngx_http_request_t *r)
 
   rc = ngx_http_send_header(r);
 
-  if(rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+  if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
     return rc;
   }
 
