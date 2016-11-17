@@ -232,7 +232,7 @@ ngx_http_metrics_handler(ngx_http_request_t *r)
 
   ms = ngx_max(ms, 0);
 
-  fprintf(stderr, "METRICS: request time = %ld:%ld\n", (time_t)(ms / 1000), ms % 1000);
+  fprintf(stderr, "METRICS: request time = %ld ms\n", ms);
   
   return NGX_OK;
 }
