@@ -12,8 +12,6 @@ typedef struct {
 
 static ngx_int_t
 ngx_http_metrics_init(ngx_conf_t *cf);
-static ngx_int_t
-ngx_http_metrics_process_init(ngx_cycle_t *cycle);
 
 static void *
 ngx_http_metrics_create_main_conf(ngx_conf_t *cf);
@@ -71,7 +69,7 @@ ngx_http_metrics_module = {
   NGX_HTTP_MODULE,                        /* module type */
   NULL,                                   /* init master */
   NULL,                                   /* init module */
-  ngx_http_metrics_process_init,          /* init process */
+  NULL,                                   /* init process */
   NULL,                                   /* init thread */
   NULL,                                   /* exit thread */
   NULL,                                   /* exit process */
@@ -101,13 +99,6 @@ ngx_http_metrics_init(ngx_conf_t *cf)
   return NGX_OK;
 }
   
-static ngx_int_t
-ngx_http_metrics_process_init(ngx_cycle_t *cycle)
-{
-  fprintf(stderr, "METRICS: call ngx_http_metrics_process_init\n");
-  return 0;
-}
-
 static void *
 ngx_http_metrics_create_main_conf(ngx_conf_t *cf)
 {
